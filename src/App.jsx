@@ -7,6 +7,7 @@ export default function App() {
   const [isDragging, setDragging] = useState(false);
   const [canvasElements, setCanvasElements] = useState([]);
   const [text, setText] = useState("");
+  const [selectedtext, setSelectedText] = useState("");
 
   useEffect(() => {
     // create canvas
@@ -51,8 +52,18 @@ export default function App() {
       setText("");
     }
   }
+  function handleSelectText(e) {
+    const { offsetX, offsetY } = e.nativeEvent;
+
+    let ele = canvasElements.find((item) => offsetX >= item.x && offsetX <= item.x + item.metrics.width && offsetY >= item.y - item.metrics.actualBoundingBoxAscent && offsetY <= item.y + item.metrics.actualBoundingBoxDescent);
+
+    if (ele) {
+      setSelectedText(ele);
+    }
+  }
   function handleDeleteText(e) {
-    removeText(250, 250);
+    removeText(selectedtext.x, selectedtext.y);
+    setSelectedText("");
   }
   function handleGrabText(e) {
     const { offsetX, offsetY } = e.nativeEvent;
@@ -78,14 +89,16 @@ export default function App() {
   return (
     <div className="pretend-root bg-zinc-600 min-h-screen w-screen">
       <header></header>
-      <canvas ref={canvasRef} className="bg-slate-100" onDoubleClick={handleGrabText} onMouseMove={handleDragText}></canvas>
+      <canvas ref={canvasRef} className="bg-slate-100" onClick={handleSelectText} onDoubleClick={handleGrabText} onMouseMove={handleDragText}></canvas>
       <textarea value={text} onChange={handleTextAreaChange} rows={7} placeholder="Type text to add to canvas..."></textarea>
       <button className="py-2 px-4 border border-zinc-100" id="create" onClick={handleCreateText}>
         Create
       </button>
-      <button className="py-2 px-4 border border-zinc-100" id="delete" onClick={handleDeleteText}>
-        Delete
-      </button>
+      {selectedtext && (
+        <button className="py-2 px-4 border border-zinc-100" id="delete" onClick={handleDeleteText}>
+          Delete
+        </button>
+      )}
       <footer></footer>
     </div>
   );
