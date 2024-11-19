@@ -6,6 +6,7 @@ export default function App() {
   const [draggedText, setDraggedText] = useState({});
   const [isDragging, setDragging] = useState(false);
   const [canvasElements, setCanvasElements] = useState([]);
+  const [text, setText] = useState("");
 
   useEffect(() => {
     // create canvas
@@ -40,8 +41,15 @@ export default function App() {
   }
 
   // event handlers
+  function handleTextAreaChange(e) {
+    const { value } = e.target;
+    setText(value);
+  }
   function handleCreateText(e) {
-    createText("hello", 250, 250);
+    if (text != "") {
+      createText(text, 250, 250);
+      setText("");
+    }
   }
   function handleDeleteText(e) {
     removeText(250, 250);
@@ -60,22 +68,24 @@ export default function App() {
     if (draggedText && isDragging) {
       const { offsetX, offsetY } = e.nativeEvent;
       removeText(draggedText.x, draggedText.y);
-      let newX = offsetX - 15;
-      let newY = offsetY + 15;
-      createText("hello", newX, newY);
+      let newX = offsetX - draggedText.metrics.width / 2;
+      let newY = offsetY + draggedText.metrics.actualBoundingBoxAscent / 2;
+      createText(draggedText.text, newX, newY);
       setDraggedText((prev) => ({ ...prev, x: newX, y: newY }));
     }
   }
 
   return (
-    <div className="pretend-root bg-zinc-600 h-screen w-screen">
+    <div className="pretend-root bg-zinc-600 min-h-screen w-screen">
       <header></header>
       <canvas ref={canvasRef} className="bg-slate-100" onDoubleClick={handleGrabText} onMouseMove={handleDragText}></canvas>
-      <textarea></textarea>
-      <button id="create" onClick={handleCreateText}>
+      <textarea value={text} onChange={handleTextAreaChange} rows={7} placeholder="Type text to add to canvas..."></textarea>
+      <button className="py-2 px-4 border border-zinc-100" id="create" onClick={handleCreateText}>
         Create
       </button>
-      <button id="delete" onClick={handleDeleteText}></button>
+      <button className="py-2 px-4 border border-zinc-100" id="delete" onClick={handleDeleteText}>
+        Delete
+      </button>
       <footer></footer>
     </div>
   );
