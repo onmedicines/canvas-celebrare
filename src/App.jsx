@@ -11,6 +11,10 @@ export default function App() {
   const [timeLine, setTimeLine] = useState([]);
   const [timeLineCanvas, setTimeLineCanvas] = useState([]);
   const [coordinate, setCoordinate] = useState(-1);
+  const [fontSize, setFontSize] = useState(50);
+  const [fontFamily, setFontFamily] = useState("Arial");
+  const [fontColor, setFontColor] = useState("#000000");
+  const fontOptions = ["Arial", "Times New Roman", "Courier New", "Georgia", "Verdana", "Helvetica", "Comic Sans MS", "Impact"];
 
   useEffect(() => {
     // create canvas
@@ -64,15 +68,20 @@ export default function App() {
   }
   function repaintCanvas(array) {
     ctxRef.current.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
+    console.log(array); //logs
     array.forEach((item) => {
+      ctxRef.current.font = `${item.size}px ${item.family}`;
+      ctxRef.current.fillStyle = item.color;
       ctxRef.current.fillText(item.text, item.x, item.y);
     });
   }
-  function createText(text, x, y) {
+  function createText(text, x, y, family, color, size) {
+    ctxRef.current.font = `${size}px ${family}`;
+    ctxRef.current.fillStyle = color;
     ctxRef.current.fillText(text, x, y);
     const metrics = ctxRef.current.measureText(text);
-    setCanvasElements((prev) => [...prev, { text, x, y, metrics }]);
-    setTimeLineCanvas((prev) => [...prev, { text, x, y, metrics }]);
+    setCanvasElements((prev) => [...prev, { text, x, y, metrics, family, color, size }]);
+    setTimeLineCanvas((prev) => [...prev, { text, x, y, metrics, family, color, size }]);
   }
   function removeText(x, y) {
     let newArray = canvasElements.filter((item) => item.x !== x || item.y !== y);
@@ -87,7 +96,7 @@ export default function App() {
   }
   function handleCreateText(e) {
     if (text != "") {
-      createText(text, 250, 250);
+      createText(text, 250, 250, fontFamily, fontColor, fontSize);
       setText("");
     }
   }
@@ -129,7 +138,7 @@ export default function App() {
       removeText(draggedText.x, draggedText.y);
       let newX = offsetX - draggedText.metrics.width / 2;
       let newY = offsetY + draggedText.metrics.actualBoundingBoxAscent / 2;
-      createText(draggedText.text, newX, newY);
+      createText(draggedText.text, newX, newY, draggedText.family, draggedText.color, draggedText.size);
       setDraggedText((prev) => ({ ...prev, x: newX, y: newY }));
     }
   }
@@ -158,6 +167,25 @@ export default function App() {
           <button onClick={handleGoForward} className="px-4 py-2 bg-zinc-700 text-white rounded-lg hover:bg-zinc-600 transition-colors">
             Next
           </button>
+          <div className="">
+            <select value={fontFamily} onChange={(e) => setFontFamily(e.target.value)} className="w-full p-2 rounded-md bg-zinc-600 text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+              {fontOptions.map((font) => (
+                <option key={font} value={font}>
+                  {font}
+                </option>
+              ))}
+            </select>
+
+            <div className="flex items-center gap-2">
+              <input type="range" min="12" max="100" value={fontSize} onChange={(e) => setFontSize(Number(e.target.value))} className="flex-1" />
+              <span className="text-white w-12">{fontSize}px</span>
+            </div>
+
+            <div className="flex items-center gap-2">
+              <input type="color" value={fontColor} onChange={(e) => setFontColor(e.target.value)} className="h-8 w-16 rounded" />
+              <span className="text-white">{fontColor}</span>
+            </div>
+          </div>
         </header>
 
         <main className="space-y-6">
