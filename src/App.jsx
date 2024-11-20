@@ -218,7 +218,7 @@ export default function App() {
                 Clear Canvas
               </button>
 
-              <button onClick={logAnything} className="ml-auto px-6 py-2 bg-zinc-700 text-white rounded-sm hover:bg-zinc-600 transition-colors">
+              <button onClick={logAnything} className="ml-auto text-white hover:underline">
                 Log
               </button>
             </div>
