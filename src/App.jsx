@@ -122,14 +122,15 @@ export default function App() {
 
     if (ele) {
       setDraggedText(ele);
-    }
-    let newIsDragging = !isDragging;
-    setDragging(newIsDragging);
-    if (!newIsDragging) {
-      // add a snapshot of canvas to timeline
-      // if its a double click (the idDragging changes only on double clicks)
-      // and the double click sets isDragging to flase (means that the elemnt stopped moving)
-      addToTimeline();
+      let newIsDragging = !isDragging;
+      setDragging(newIsDragging);
+      if (!newIsDragging) {
+        // add a snapshot of canvas to timeline
+        // if its a double click (the idDragging changes only on double clicks)
+        // and the double click sets isDragging to flase (means that the elemnt stopped moving)
+        addToTimeline();
+        setDraggedText({});
+      }
     }
   }
   function handleDragText(e) {
