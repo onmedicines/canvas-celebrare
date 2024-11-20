@@ -163,16 +163,20 @@ export default function App() {
   return (
     <div className="h-screen min-h-screen bg-zinc-800 p-6">
       <div className="mx-auto space-y-4 flex flex-col h-full">
-        <header className="flex items-center">
+        <header className="flex items-center justify-between">
           <div className="flex gap-2">
-            <button onClick={handleGoBack} className={`px-4 py-2 ${coordinate > 0 ? "bg-zinc-700 text-white rounded-sm hover:bg-zinc-600 transition-colors" : "text-zinc-500"}`}>
+            <button onClick={handleGoBack} className={`px-4 py-2 ${coordinate > 0 ? "bg-zinc-700 text-white rounded-sm hover:bg-zinc-600 transition-colors" : "text-zinc-500 border border-zinc-600"}`}>
               Previous
             </button>
-            <button onClick={handleGoForward} className={`px-4 py-2 ${coordinate < timeLine.length - 1 ? "bg-zinc-700 text-white rounded-sm hover:bg-zinc-600 transition-colors" : "text-zinc-500"}`}>
+            <button onClick={handleGoForward} className={`px-4 py-2 ${coordinate < timeLine.length - 1 ? "bg-zinc-700 text-white rounded-sm hover:bg-zinc-600 transition-colors" : "text-zinc-500 border border-zinc-600"}`}>
               Next
             </button>
           </div>
-          <div className="flex gap-2 ml-auto">
+          <div className="relative group">
+            <button className="px-6 py-2 border border-sky-400 text-sky-400 rounded-sm hover:text-white hover:bg-sky-400 transition-colors">Help</button>
+            <div class="absolute -left-[100%] top-full mt-2 w-[300%] bg-white font-semibold text-zinc-700 p-4 rounded-sm shadow-lg border border-gray-200 opacity-0 group-hover:opacity-100  pointer-events-none  transition duration-200">Double tap to grab a text then move the pointer to move it. Double tap again to drop the text.</div>
+          </div>
+          <div className="flex gap-2">
             <select value={fontFamily} onChange={(e) => setFontFamily(e.target.value)} className="w-full p-2 rounded-sm bg-zinc-600 text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
               {fontOptions.map((font) => (
                 <option key={font} value={font}>
