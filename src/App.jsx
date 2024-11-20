@@ -19,8 +19,11 @@ export default function App() {
   useEffect(() => {
     // create canvas
     const canvas = canvasRef.current;
-    canvas.width = 700;
-    canvas.height = 400;
+    const container = canvas.parentElement;
+    const { width, height } = container.getBoundingClientRect();
+    console.log(width, height);
+    canvas.width = width;
+    canvas.height = height;
 
     // create canvas context
     ctxRef.current = canvas.getContext("2d");
@@ -68,7 +71,6 @@ export default function App() {
   }
   function repaintCanvas(array) {
     ctxRef.current.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
-    console.log(array); //logs
     array.forEach((item) => {
       ctxRef.current.font = `${item.size}px ${item.family}`;
       ctxRef.current.fillStyle = item.color;
@@ -159,17 +161,19 @@ export default function App() {
   }
 
   return (
-    <div className="min-h-screen bg-zinc-800 p-6">
-      <div className="max-w-[2000px] border-2 border-yellow-200  mx-auto space-y-6">
-        <header className="flex items-center gap-4">
-          <button onClick={handleGoBack} className="px-4 py-2 bg-zinc-700 text-white rounded-lg hover:bg-zinc-600 transition-colors">
-            Previous
-          </button>
-          <button onClick={handleGoForward} className="px-4 py-2 bg-zinc-700 text-white rounded-lg hover:bg-zinc-600 transition-colors">
-            Next
-          </button>
-          <div className="">
-            <select value={fontFamily} onChange={(e) => setFontFamily(e.target.value)} className="w-full p-2 rounded-md bg-zinc-600 text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+    <div className="h-screen min-h-screen bg-zinc-800 p-6">
+      <div className="mx-auto space-y-4 flex flex-col h-full">
+        <header className="flex items-center">
+          <div className="flex gap-2">
+            <button onClick={handleGoBack} className={`px-4 py-2 ${coordinate > 0 ? "bg-zinc-700 text-white rounded-sm hover:bg-zinc-600 transition-colors" : "text-zinc-500"}`}>
+              Previous
+            </button>
+            <button onClick={handleGoForward} className={`px-4 py-2 ${coordinate < timeLine.length - 1 ? "bg-zinc-700 text-white rounded-sm hover:bg-zinc-600 transition-colors" : "text-zinc-500"}`}>
+              Next
+            </button>
+          </div>
+          <div className="flex gap-2 ml-auto">
+            <select value={fontFamily} onChange={(e) => setFontFamily(e.target.value)} className="w-full p-2 rounded-sm bg-zinc-600 text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
               {fontOptions.map((font) => (
                 <option key={font} value={font}>
                   {font}
@@ -183,36 +187,38 @@ export default function App() {
             </div>
 
             <div className="flex items-center gap-2">
-              <input type="color" value={fontColor} onChange={(e) => setFontColor(e.target.value)} className="h-8 w-16 rounded" />
+              <input type="color" value={fontColor} onChange={(e) => setFontColor(e.target.value)} className="h-8 w-16 rounded-sm" />
               <span className="text-white">{fontColor}</span>
             </div>
           </div>
         </header>
 
-        <main className="space-y-6">
-          <div className="canvas-container flex justify-center overflow-hidden shadow-lg">
-            <canvas ref={canvasRef} className="bg-white" onClick={handleSelectText} onDoubleClick={handleGrabText} onMouseMove={handleDragText} />
+        <main className="grow flex flex-col">
+          <div className="grow">
+            <div className="canvas-container flex justify-center overflow-hidden h-full w-full">
+              <canvas ref={canvasRef} className="bg-white" onClick={handleSelectText} onDoubleClick={handleGrabText} onMouseMove={handleDragText} />
+            </div>
           </div>
 
-          <div className="flex flex-col gap-4">
-            <textarea value={text} onChange={handleTextAreaChange} rows={4} className="w-full p-3 rounded-lg bg-zinc-700 text-white placeholder-zinc-400 resize-none focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Type text to add to canvas..." />
+          <div className="flex flex-col gap-2">
+            <textarea value={text} onChange={handleTextAreaChange} className="w-full p-3 rounded-sm bg-zinc-700 text-white placeholder-zinc-400 resize-none focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Type text to add to canvas..." />
 
-            <div className="flex gap-4">
-              <button onClick={handleCreateText} className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+            <div className="flex gap-2">
+              <button onClick={handleCreateText} className="px-6 py-2 bg-blue-600 text-white rounded-sm hover:bg-blue-700 transition-colors">
                 Create
               </button>
 
               {selectedtext && (
-                <button onClick={handleDeleteText} className="px-6 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors">
+                <button onClick={handleDeleteText} className="px-6 py-2 bg-red-600 text-white rounded-sm hover:bg-red-700 transition-colors">
                   Delete
                 </button>
               )}
 
-              <button onClick={clearCanvas} className="px-6 py-2 bg-zinc-700 text-white rounded-lg hover:bg-zinc-600 transition-colors">
+              <button onClick={clearCanvas} className="px-6 py-2 bg-zinc-700 text-white rounded-sm hover:bg-zinc-600 transition-colors">
                 Clear Canvas
               </button>
 
-              <button onClick={logAnything} className="ml-auto px-6 py-2 bg-zinc-700 text-white rounded-lg hover:bg-zinc-600 transition-colors">
+              <button onClick={logAnything} className="ml-auto px-6 py-2 bg-zinc-700 text-white rounded-sm hover:bg-zinc-600 transition-colors">
                 Log
               </button>
             </div>
