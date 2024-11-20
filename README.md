@@ -13,7 +13,5 @@ https://canvas-celebrare.onrender.com/
 
 # Instructions
 
-- unzip the folder
-- cd to the unzipped directory
-- run "npm run dev"
-- run npm run build for dist
+- run "npm i" then "npm run dev".
+- run "npm run build" to build a dist.
