@@ -16,7 +16,7 @@ export default function App() {
     // create canvas
     const canvas = canvasRef.current;
     canvas.width = 700;
-    canvas.height = 500;
+    canvas.height = 400;
 
     // create canvas context
     ctxRef.current = canvas.getContext("2d");
@@ -51,6 +51,17 @@ export default function App() {
   }
 
   // canvas utility functions
+  function clearCanvas() {
+    ctxRef.current.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
+    setDraggedText({});
+    setDragging(false);
+    setCanvasElements([]);
+    setText("");
+    setSelectedText(null);
+    setTimeLine([]);
+    setTimeLineCanvas([]);
+    setCoordinate(-1);
+  }
   function repaintCanvas(array) {
     ctxRef.current.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
     array.forEach((item) => {
@@ -138,29 +149,47 @@ export default function App() {
   }
 
   return (
-    <div className="pretend-root bg-zinc-600 min-h-screen w-screen ">
-      <header>
-        <button className="py-2 px-4 border border-zinc-100" onClick={handleGoBack}>
-          Prev
-        </button>
-        <button className="py-2 px-4 border border-zinc-100" onClick={handleGoForward}>
-          Next
-        </button>
-      </header>
-      <main>
-        <canvas ref={canvasRef} className="bg-slate-100" onClick={handleSelectText} onDoubleClick={handleGrabText} onMouseMove={handleDragText}></canvas>
-        <textarea value={text} onChange={handleTextAreaChange} rows={7} placeholder="Type text to add to canvas..."></textarea>
-        <button className="py-2 px-4 border border-zinc-100" id="create" onClick={handleCreateText}>
-          Create
-        </button>
-        <button onClick={logAnything}>Log</button>
-        {selectedtext && (
-          <button className="py-2 px-4 border border-zinc-100" id="delete" onClick={handleDeleteText}>
-            Delete
+    <div className="min-h-screen bg-zinc-800 p-6">
+      <div className="max-w-[2000px] border-2 border-yellow-200  mx-auto space-y-6">
+        <header className="flex items-center gap-4">
+          <button onClick={handleGoBack} className="px-4 py-2 bg-zinc-700 text-white rounded-lg hover:bg-zinc-600 transition-colors">
+            Previous
           </button>
-        )}
-      </main>
-      <footer></footer>
+          <button onClick={handleGoForward} className="px-4 py-2 bg-zinc-700 text-white rounded-lg hover:bg-zinc-600 transition-colors">
+            Next
+          </button>
+        </header>
+
+        <main className="space-y-6">
+          <div className="canvas-container flex justify-center overflow-hidden shadow-lg">
+            <canvas ref={canvasRef} className="bg-white" onClick={handleSelectText} onDoubleClick={handleGrabText} onMouseMove={handleDragText} />
+          </div>
+
+          <div className="flex flex-col gap-4">
+            <textarea value={text} onChange={handleTextAreaChange} rows={4} className="w-full p-3 rounded-lg bg-zinc-700 text-white placeholder-zinc-400 resize-none focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Type text to add to canvas..." />
+
+            <div className="flex gap-4">
+              <button onClick={handleCreateText} className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+                Create
+              </button>
+
+              {selectedtext && (
+                <button onClick={handleDeleteText} className="px-6 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors">
+                  Delete
+                </button>
+              )}
+
+              <button onClick={clearCanvas} className="px-6 py-2 bg-zinc-700 text-white rounded-lg hover:bg-zinc-600 transition-colors">
+                Clear Canvas
+              </button>
+
+              <button onClick={logAnything} className="ml-auto px-6 py-2 bg-zinc-700 text-white rounded-lg hover:bg-zinc-600 transition-colors">
+                Log
+              </button>
+            </div>
+          </div>
+        </main>
+      </div>
     </div>
   );
 }
